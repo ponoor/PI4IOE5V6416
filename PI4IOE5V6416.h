@@ -1,11 +1,11 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-namespace PCA95x5 {
+namespace PI4IOE5V64XX {
 
 namespace Reg {
     enum : uint8_t {
-        INPUT_PORT_0,
+        INPUT_PORT_0 = 0x00,
         INPUT_PORT_1,
         OUTPUT_PORT_0,
         OUTPUT_PORT_1,
@@ -13,6 +13,21 @@ namespace Reg {
         POLARITY_INVERSION_PORT_1,
         CONFIGURATION_PORT_0,
         CONFIGURATION_PORT_1,
+        OUTPUT_DRIVE_STRENGTH_REGISTER_0_0 = 0x40,
+        OUTPUT_DRIVE_STRENGTH_REGISTER_0_1,
+        OUTPUT_DRIVE_STRENGTH_REGISTER_1_0,
+        OUTPUT_DRIVE_STRENGTH_REGISTER_1_1,
+        INPUT_LATCH_REGISTER_0,
+        INPUT_LATCH_REGISTER_1,
+        PULL_UP_DOWN_ENABLE_REGISTER_0,
+        PULL_UP_DOWN_ENABLE_REGISTER_1,
+        PULL_UP_DOWN_SELECTION_REGISTER_0,
+        PULL_UP_DOWN_SELECTION_REGISTER_1,
+        INTERRUPT_MASK_REGISTER_0,
+        INTERRUPT_MASK_REGISTER_1,
+        INTERRUPT_STATUS_REGISTER_0,
+        INTERRUPT_STATUS_REGISTER_1,
+        OUTPUT_PORT_CONFIGURATION_REGISTER
     };
 }
 
@@ -52,8 +67,18 @@ namespace Direction {
     enum DirectionAll : uint16_t { OUT_ALL = 0x0000, IN_ALL = 0xFFFF };
 }  // namespace Direction
 
+namespace PullUpDownEnable {
+    enum PullUpDownEnable : uint8_t { DISABLE, ENABLE };
+    enum PullUpDownEnableAll : uint16_t { DISABLE_ALL = 0x0000, ENABLE_ALL = 0xFFFF };
+}
+
+namespace PullUpDownSelection {
+    enum PullUpDownSelection : uint8_t { PULL_DOWN, PULL_UP };
+    enum PullUpDownSelectionAll : uint16_t { PULL_DOWN_ALL = 0x0000, PULL_UP_ALL = 0xFFFF };
+}
+
 template <typename WireType = TwoWire>
-class PCA95x5 {
+class PI4IOE5V64XX {
     union Ports {
         uint16_t w;
         uint8_t b[2];
@@ -67,6 +92,8 @@ class PCA95x5 {
     Ports output {0xFFFF};
     Ports pol {0x0000};
     Ports dir {0xFFFF};
+    Ports pe {0x0000};
+    Ports pud {0x0000};
     uint8_t status {0x00};
 
 public:
@@ -124,6 +151,34 @@ public:
         return direction_impl();
     }
 
+    bool pullUpDownEnable(const uint16_t value) {
+        this->pe.w = value;
+        return pullup_down_enable_impl();
+    }
+
+    bool pullUpDownEnable(const Port::Port port, const PullUpDownEnable::PullUpDownEnable pe) {
+        if (pe == PullUpDownEnable::ENABLE) {
+            this->pe.w |= (1 << port);
+        } else {
+            this->pe.w &= ~(1 << port);
+        }
+        return pullup_down_enable_impl();
+    }
+
+    bool pullUpDownSelection(const uint16_t value) {
+        this->pud.w = value;
+        return pullup_down_selection_impl();
+    }
+
+    bool pullUpDownSelection(const Port::Port port, const PullUpDownSelection::PullUpDownSelection pud) {
+        if (pud == PullUpDownSelection::PULL_UP) {
+            this->pe.w |= (1 << port);
+        } else {
+            this->pe.w &= ~(1 << port);
+        }
+        return pullup_down_selection_impl();
+    }
+
     uint8_t i2c_error() const {
         return status;
     }
@@ -139,6 +194,14 @@ private:
 
     bool direction_impl() {
         return write_bytes(this->addr, Reg::CONFIGURATION_PORT_0, this->dir.b, 2);
+    }
+
+    bool pullup_down_enable_impl() {
+        return write_bytes(this->addr, Reg::PULL_UP_DOWN_ENABLE_REGISTER_0, this->dir.b, 2);
+    }
+
+    bool pullup_down_selection_impl() {
+        return write_bytes(this->addr, Reg::PULL_UP_DOWN_SELECTION_REGISTER_0, this->dir.b, 2);
     }
 
     int8_t read_bytes(const uint8_t dev, const uint8_t reg, uint8_t* data, const uint8_t size) {
@@ -160,7 +223,7 @@ private:
     }
 };
 
-}  // namespace PCA95x5
+}  // namespace PI4IOE5V64XX
 
-using PCA9535 = PCA95x5::PCA95x5<>;
-using PCA9555 = PCA95x5::PCA95x5<>;
+// using PI4IOE5V6408 = PI4IOE5V64XX::PI4IOE5V64XX<>;
+using PI4IOE5V6416 = PI4IOE5V64XX::PI4IOE5V64XX<>;

@@ -1,19 +1,18 @@
-# PCA95x5
+# PI4IOE5V6416
 
-Arduino library for [PCA9535](https://www.ti.com/product/PCA9535) and [PCA9555](https://www.ti.com/product/PCA9555) (Remote 16-bit I2C and SMBus I/O Expander with Interrupt Output and Configuration Registers).
+Arduino library for [PI4IOE5V6416](https://www.diodes.com/part/view/PI4IOE5V6416/) (16-bit general-purpose I/O expander that provides remote I/O expansion for most microcontroller families via the I2C-bus interface).
 
+This library is forked from hideakitai's [PCA95x5](https://github.com/hideakitai/PCA95x5) library.
 ## Usage
 
-You can specify a port using either index (`0` - `15`) or enum (`PCA95x5::Port::P02`, etc.).
+You can specify a port using either index (`0` - `15`) or enum (`PI4IOE5V64XX::Port::P02`, etc.).
 
 ### Input
 
 ```C++
-#include <PCA95x5.h>
+#include <PI4IOE5V6416.h>
 
-// select one of them
-PCA9535 ioex;
-// PCA9555 ioex;
+PI4IOE5V6416 ioex;
 
 void setup() {
     Serial.begin(115200);
@@ -21,8 +20,10 @@ void setup() {
 
     Wire.begin();
     ioex.attach(Wire);
-    ioex.polarity(PCA95x5::Polarity::ORIGINAL_ALL);
-    ioex.direction(PCA95x5::Direction::IN_ALL);
+    ioex.polarity(PI4IOE5V64XX::Polarity::ORIGINAL_ALL);
+    ioex.direction(PI4IOE5V64XX::Direction::IN_ALL);
+    ioex.pullUpDownEnable(PI4IOE5V64XX::PullUpDownEnable::ENABLE_ALL);
+    ioex.pullUpDownSelection(PI4IOE5V64XX::PullUpDownSelection::PULL_UP_ALL);
 }
 
 void loop() {
@@ -34,11 +35,9 @@ void loop() {
 ### Output
 
 ```C++
-#include <PCA95x5.h>
+#include <PI4IOE5V6416.h>
 
-// select one of them
-// PCA9535 ioex;
-PCA9555 ioex;
+PI4IOE5V6416 ioex;
 
 void setup() {
     Serial.begin(115200);
@@ -46,9 +45,9 @@ void setup() {
 
     Wire.begin();
     ioex.attach(Wire);
-    ioex.polarity(PCA95x5::Polarity::ORIGINAL_ALL);
-    ioex.direction(PCA95x5::Direction::OUT_ALL);
-    ioex.write(PCA95x5::Level::L_ALL);
+    ioex.polarity(PI4IOE5V64XX::Polarity::ORIGINAL_ALL);
+    ioex.direction(PI4IOE5V64XX::Direction::OUT_ALL);
+    ioex.write(PI4IOE5V64XX::Level::L_ALL);
 }
 
 void loop() {
@@ -56,7 +55,7 @@ void loop() {
         Serial.print("set port high: ");
         Serial.println(i);
 
-        ioex.write(i, PCA95x5::Level::H);
+        ioex.write(i, PI4IOE5V64XX::Level::H);
         Serial.println(ioex.read(), BIN);
         delay(500);
     }
@@ -65,7 +64,7 @@ void loop() {
         Serial.print("set port low: ");
         Serial.println(i);
 
-        ioex.write(i, PCA95x5::Level::L);
+        ioex.write(i, PI4IOE5V64XX::Level::L);
         Serial.println(ioex.read(), BIN);
         delay(500);
     }
@@ -84,6 +83,11 @@ bool polarity(const uint16_t value);
 bool polarity(const uint8_t port, const Polarity::Polarity pol);
 bool direction(const uint16_t value);
 bool direction(const uint8_t port, const Direction::Direction dir);
+bool pullUpDownEnable(const uint16_t value);
+bool pullUpDownEnable(const Port::Port port, const PullUpDownEnable::PullUpDownEnable pe)
+bool pullUpDownSelection(const uint16_t value)
+bool pullUpDownSelection(const Port::Port port, const PullUpDownSelection::PullUpDownSelection pud)
+
 uint8_t i2c_error() const;
 ```
 
@@ -119,6 +123,14 @@ namespace Polarity {
 namespace Direction {
     enum Direction : uint8_t { OUT, IN };
     enum DirectionAll : uint16_t { OUT_ALL = 0x0000, IN_ALL = 0xFFFF };
+}
+namespace PullUpDownEnable {
+    enum PullUpDownEnable : uint8_t { DISABLE, ENABLE };
+    enum PullUpDownEnableAll : uint16_t { DISABLE_ALL = 0x0000, ENABLE_ALL = 0xFFFF };
+}
+namespace PullUpDownSelection {
+    enum PullUpDownSelection : uint8_t { PULL_DOWN, PULL_UP };
+    enum PullUpDownSelectionAll : uint16_t { PULL_DOWN_ALL = 0x0000, PULL_UP_ALL = 0xFFFF };
 }
 ```
 
