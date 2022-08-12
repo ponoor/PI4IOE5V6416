@@ -3,6 +3,14 @@
 Arduino library for [PI4IOE5V6416](https://www.diodes.com/part/view/PI4IOE5V6416/) (16-bit general-purpose I/O expander that provides remote I/O expansion for most microcontroller families via the I2C-bus interface).
 
 This library is forked from hideakitai's [PCA95x5](https://github.com/hideakitai/PCA95x5) library.
+
+To Do:
+- Set output drive strength
+- Set input latch
+- Set interrupt mask
+- Read interrupt status
+
+
 ## Usage
 
 You can specify a port using either index (`0` - `15`) or enum (`PI4IOE5V64XX::Port::P02`, etc.).
@@ -84,9 +92,9 @@ bool polarity(const uint8_t port, const Polarity::Polarity pol);
 bool direction(const uint16_t value);
 bool direction(const uint8_t port, const Direction::Direction dir);
 bool pullUpDownEnable(const uint16_t value);
-bool pullUpDownEnable(const Port::Port port, const PullUpDownEnable::PullUpDownEnable pe)
-bool pullUpDownSelection(const uint16_t value)
-bool pullUpDownSelection(const Port::Port port, const PullUpDownSelection::PullUpDownSelection pud)
+bool pullUpDownEnable(const Port::Port port, const PullUpDownEnable::PullUpDownEnable pe);
+bool pullUpDownSelection(const uint16_t value);
+bool pullUpDownSelection(const Port::Port port, const PullUpDownSelection::PullUpDownSelection pud);
 
 uint8_t i2c_error() const;
 ```

@@ -1,19 +1,19 @@
 {
-    "name": "PCA95x5",
-    "keywords": "i2c,mux,io expander,pca9535,pca9555",
-    "description": "Arduino library for PCA9535 and PCA9555 (Remote 16-bit I2C and SMBus I/O Expander with Interrupt Output and Configuration Registers)",
+    "name": "PI4IOE5V6416",
+    "keywords": "i2c,mux,io expander,PI4IOE5V6416",
+    "description": "Arduino library for PI4IOE5V6416 (16-bit general-purpose I/O expander that provides remote I/O expansion for most microcontroller families via the I2C-bus interface)",
     "repository":
     {
         "type": "git",
-        "url": "https://github.com/hideakitai/PCA95x5.git"
+        "url": "https://github.com/ponoor/PI4IOE5V6416"
     },
     "authors":
     {
-        "name": "Hideaki Tai",
-        "url": "https://github.com/hideakitai",
+        "name": "Ponoor Experiments inc.",
+        "url": "https://github.com/ponoor",
         "maintainer": true
     },
-    "version": "0.1.1",
+    "version": "0.2.0",
     "license": "MIT",
     "frameworks": "arduino",
     "platforms": "*"
