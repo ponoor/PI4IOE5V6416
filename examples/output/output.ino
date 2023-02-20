@@ -1,6 +1,6 @@
-#include <PCA95x5.h>
+#include <PI4IOE5V6416.h>
 
-PCA9555 ioex;
+PI4IOE5V6416 ioex;
 
 void setup() {
     Serial.begin(115200);
@@ -8,9 +8,9 @@ void setup() {
 
     Wire.begin();
     ioex.attach(Wire);
-    ioex.polarity(PCA95x5::Polarity::ORIGINAL_ALL);
-    ioex.direction(PCA95x5::Direction::OUT_ALL);
-    ioex.write(PCA95x5::Level::L_ALL);
+    ioex.polarity(PI4IOE5V6416::Polarity::ORIGINAL_ALL);
+    ioex.direction(PI4IOE5V6416::Direction::OUT_ALL);
+    ioex.write(PI4IOE5V6416::Level::L_ALL);
 }
 
 void loop() {
@@ -18,7 +18,7 @@ void loop() {
         Serial.print("set port high: ");
         Serial.println(i);
 
-        ioex.write(i, PCA95x5::Level::H);
+        ioex.write(i, PI4IOE5V6416::Level::H);
         Serial.println(ioex.read(), BIN);
         delay(500);
     }
@@ -27,7 +27,7 @@ void loop() {
         Serial.print("set port low: ");
         Serial.println(i);
 
-        ioex.write(i, PCA95x5::Level::L);
+        ioex.write(i, PI4IOE5V6416::Level::L);
         Serial.println(ioex.read(), BIN);
         delay(500);
     }
